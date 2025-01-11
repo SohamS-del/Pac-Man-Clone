@@ -1,6 +1,6 @@
 const canvas = document.getElementById("canvas");
 const canvasContext = canvas.getContext("2d");
-const pacmanFrames = document.getElementById("animation");
+const pacmanFrames = document.getElementById("animations");
 const ghostFrames = document.getElementById("ghosts");
 
 let createRect = (x,y,width,height,color) => {
@@ -9,10 +9,17 @@ let createRect = (x,y,width,height,color) => {
 };
 let fps = 30;
 let oneBlockSize = 20;
-let wallcolor = "#8b0000";
-let wallSpaceWidth = oneBlockSize /3;
+let wallcolor = "red";
+let wallSpaceWidth = oneBlockSize /1.5;
 let wallOffset = (oneBlockSize - wallSpaceWidth)/2;
 let wallInnerColor = "black"
+
+
+//Move Direction
+const DIRECTION_RIGHT = 4;
+const DIRECTION_UP = 3;
+const DIRECTION_LEFT = 2;
+const DIRECTION_BOTTOM = 1;
 
 let map = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -25,7 +32,7 @@ let map = [
     [1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1],
     [0, 0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 0, 0, 0, 0],
     [1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1],
-    [2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
+    [1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1],
     [1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1],
     [0, 0, 0, 0, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 0, 0, 0, 0],
     [0, 0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 0, 0, 0, 0],
@@ -48,13 +55,15 @@ let gameloop = () => {
  
 let update = () => {
     //todo
-    
+    pacman.moveProcess();
 }
 
 let draw = () => {
      //todo
      createRect(0,0,canvas.width,canvas.height,"black")
      drawWalls();
+
+     pacman.draw();
 }
 
 let gameInterval = setInterval(gameloop,1000/fps)
@@ -69,7 +78,7 @@ let drawWalls = () => {
                     oneBlockSize,
                     oneBlockSize,
                     wallcolor
-                );
+                )
                 if(j > 0 && map[i][j-1] == 1){
                     createRect(
                         j*oneBlockSize,
@@ -79,30 +88,30 @@ let drawWalls = () => {
                         wallInnerColor
 
                     )
-                }
+                };
                 if(j < map[0].length - 1 && map[i][j+1] == 1) {
                     createRect(
-                        j*oneBlockSize +wallOffset,
+                        j*oneBlockSize + wallOffset,
                         i*oneBlockSize + wallOffset,
                         wallSpaceWidth + wallOffset,
-                        wallSpaceWidth,
+                        wallSpaceWidth ,
                         wallInnerColor
 
                     );
-                }
+                };
                 if(i > 0 && map[i-1][j] == 1){
                     createRect(
                         j*oneBlockSize + wallOffset,
-                        i*oneBlockSize ,
+                        i*oneBlockSize  ,
                         wallSpaceWidth ,
                         wallSpaceWidth + wallOffset,
                         wallInnerColor
 
                     )
-                }
+                };
                 if(i < map.length - 1 && map[i+1][j] == 1) {
                     createRect(
-                        j*oneBlockSize +wallOffset,
+                        j*oneBlockSize + wallOffset,
                         i*oneBlockSize + wallOffset,
                         wallSpaceWidth,
                         wallSpaceWidth  + wallOffset,
@@ -115,3 +124,37 @@ let drawWalls = () => {
         }
     }
 };
+
+let createNewPacman = () => {
+    pacman = new Pacman(
+        oneBlockSize,
+        oneBlockSize,
+        oneBlockSize,
+        oneBlockSize,
+        oneBlockSize/5
+    );
+};
+
+createNewPacman();
+gameloop();
+
+window.addEventListener("keydown", (event) =>{
+    let k = event.key;
+
+    setTimeout(() =>{
+        if(k==='a' || k==='A'|| k==="ArrowLeft"){
+            //left
+            pacman.nextDirection = DIRECTION_LEFT;
+        }else if(k==='w' || k==='W'|| k==="ArrowUp"){
+            //up
+            pacman.nextDirection = DIRECTION_UP;
+        }else if(k==='d' || k==='D'|| k==="ArrowRight"){
+            //right
+            pacman.nextDirection = DIRECTION_RIGHT;
+        }else if(k==='s' || k==='S'|| k==="ArrowDown"){
+            //bottom
+            pacman.nextDirection = DIRECTION_BOTTOM;
+        }
+
+    },1)
+})
