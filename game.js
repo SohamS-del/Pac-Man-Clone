@@ -8,11 +8,13 @@ let createRect = (x,y,width,height,color) => {
     canvasContext.fillRect(x,y,width,height);
 };
 let fps = 30;
-let oneBlockSize = 20;
+let oneBlockSize =20;
 let wallcolor = "red";
 let wallSpaceWidth = oneBlockSize /1.5;
 let wallOffset = (oneBlockSize - wallSpaceWidth)/2;
-let wallInnerColor = "black"
+let wallInnerColor = "black";
+let foodColor = "white";
+let score = 0;
 
 
 //Move Direction
@@ -48,22 +50,50 @@ let map = [
     
 ];
 
+let drawFoods = () => {
+    for(i=0;i<map.length;i++){
+        for(j=0;j<map[0].length;j++){
+            if(map[i][j] == 2){
+                createRect(j*oneBlockSize+ oneBlockSize/3,
+                    i*oneBlockSize + oneBlockSize/3,
+                    oneBlockSize/3,
+                    oneBlockSize/3,
+                    foodColor
+                );
+            }
+        }
+    }
+}
+
 let gameloop = () => {
     update();
     draw();
+    
 }
  
 let update = () => {
     //todo
-    pacman.moveProcess();
+    pacman.moveProcess();  
+    pacman.eat();
 }
+
+let drawScore = () =>{
+    canvasContext.font = "20px Emulogic";
+    canvasContext.fillstyle = "white";
+    canvasContext.fillText("Score: " + score,
+        0,
+        oneBlockSize *(map.length+1)) ;
+
+
+};
 
 let draw = () => {
      //todo
      createRect(0,0,canvas.width,canvas.height,"black")
      drawWalls();
-
+     drawFoods();
      pacman.draw();
+     drawScore();
 }
 
 let gameInterval = setInterval(gameloop,1000/fps)
