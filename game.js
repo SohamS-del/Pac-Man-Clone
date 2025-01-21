@@ -9,12 +9,20 @@ let createRect = (x,y,width,height,color) => {
 };
 let fps = 30;
 let oneBlockSize =20;
-let wallcolor = "red";
+let wallcolor = "blue";
 let wallSpaceWidth = oneBlockSize /1.5;
 let wallOffset = (oneBlockSize - wallSpaceWidth)/2;
 let wallInnerColor = "black";
-let foodColor = "white";
+let foodColor = "red";
 let score = 0;
+let lives = 3;
+let ghostCount = 4;
+let ghostImageLocations = [
+    { x: 0, y: 0 },
+    { x: 176, y: 0 },
+    { x: 0, y: 121 },
+    { x: 176, y: 121 },
+];
 
 
 //Move Direction
@@ -97,6 +105,10 @@ let draw = () => {
 }
 
 let gameInterval = setInterval(gameloop,1000/fps)
+let restartPacmanAndGhosts = () => {
+    createNewPacman();
+    createGhosts();
+};
 
 let drawWalls = () => {
     for(let i=0;i<map.length;i++){
